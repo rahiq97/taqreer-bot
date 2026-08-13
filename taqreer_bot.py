@@ -16,6 +16,7 @@ from telegram.ext import (
 # ============ عدّلي هالمعلومات بس ============
 BOT_TOKEN = "8849001117:AAFEqPD0g_o9UYhXkm-TK_CSMQn1pRFQ52k"
 PAYMENT_NUMBER = "3250745712"   # <-- حطي رقم بطاقة كي كارد
+ADMIN_CHAT_ID = 5228198744   # آيدي حسابچ - يوصلچ إشعار بكل طلب
 DELIVERY_DAYS = "2-3 أيام"        # <-- عدّلي مدة التسليم إذا تريدين
 FIXED_PRICE = 10000               # السعر الثابت بالدينار
 # ==============================================
@@ -68,6 +69,14 @@ async def receive_details(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"لطلب جديد اكتب /start"
     )
     await update.message.reply_text(summary)
+    admin_msg =(
+        f"🔔 طلب جديد!\n\n"
+        f"👤 الاسم: {update.effective_user.first_name}\n"
+        f"🆔 يوزر: @{update.effective_user.username}\n"
+        f"📌 نوع التقرير: {report_type}\n"
+        f"📌 التفاصيل: {details}"
+    )
+    await context.bot.send_message(chat_id=ADMIN_CHAT_ID, text=admin_msg)
     return ConversationHandler.END
 
 
