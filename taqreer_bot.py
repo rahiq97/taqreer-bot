@@ -44,8 +44,11 @@ async def choose_type(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "زين ✅\n\n"
         "هسه اكتبلي بنفس الرسالة:\n"
         "📚 اسم المادة/التخصص\n"
+        "🏫 القسم\n"
+        "🎓 المرحلة الدراسية\n"
         "📄 عدد الصفحات المطلوبة\n"
-        "📅 تاريخ التسليم (شنو آخر موعد؟)",
+        "📅 تاريخ التسليم (شنو آخر موعد؟)\n\n"
+        "📷 وإذا تريدين شعار جامعتج بالغلاف، أرسليه كصورة بعد هذي الرسالة",
         reply_markup=ReplyKeyboardRemove(),
     )
     return ASKING_DETAILS
