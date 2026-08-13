@@ -55,7 +55,7 @@ async def receive_details(update: Update, context: ContextTypes.DEFAULT_TYPE):
     details = update.message.text
     report_type = context.user_data.get("report_type", "غير محدد")
 
-    summary = 
+    summary = (
         f"استلمت طلبك 👌\n\n"
         f"📌 نوع التقرير: {report_type}\n"
         f"📌 التفاصيل: {details}\n\n"
