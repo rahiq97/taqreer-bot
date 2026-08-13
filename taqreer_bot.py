@@ -15,7 +15,7 @@ from telegram.ext import (
 
 # ============ عدّلي هالمعلومات بس ============
 BOT_TOKEN = "8849001117:AAFEqPD0g_o9UYhXkm-TK_CSMQn1pRFQ52k"
-PAYMENT_NUMBER = "3250745712"   # <-- حطي رقم زين كاش/آسياسيل هنا
+PAYMENT_NUMBER = "3250745712"   # <-- حطي رقم بطاقة كي كارد
 DELIVERY_DAYS = "2-3 أيام"        # <-- عدّلي مدة التسليم إذا تريدين
 FIXED_PRICE = 10000               # السعر الثابت بالدينار
 # ==============================================
@@ -54,15 +54,17 @@ async def receive_details(update: Update, context: ContextTypes.DEFAULT_TYPE):
     details = update.message.text
     report_type = context.user_data.get("report_type", "غير محدد")
 
-    summary = (
+    summary = 
         f"استلمت طلبك 👌\n\n"
         f"📌 نوع التقرير: {report_type}\n"
         f"📌 التفاصيل: {details}\n\n"
         f"💰 السعر: {FIXED_PRICE:,} دينار عراقي\n"
         f"⏳ مدة التسليم: {DELIVERY_DAYS}\n\n"
         f"طريقة الدفع:\n"
-        f"🔹 زين كاش / آسياسيل: {PAYMENT_NUMBER}\n\n"
-        f"بعد إرسال إشعار الدفع (سكرين شوت) نبدأ فوراً بشغلك ✅\n\n"
+        f"◆ بطاقة كي كارد: {PAYMENT_NUMBER}\n"
+        f"   • إذا عدج حساب كي: حولي مباشرة لهذا الرقم\n"
+        f"   • أو روحي لأقرب مكتب كي كارد وحولي المبلغ لنفس الرقم\n\n"
+        f"✅ بعد إرسال إشعار الدفع (سكرين شوت) نبدأ فوراً بشغلك\n\n"
         f"لطلب جديد اكتب /start"
     )
     await update.message.reply_text(summary)
