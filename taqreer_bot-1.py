@@ -1,0 +1,108 @@
+# -*- coding: utf-8 -*-
+"""
+بوت تقرير بلس - يستقبل طلبات التقارير ويرد تلقائي بالسعر
+"""
+
+from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    MessageHandler,
+    ConversationHandler,
+    ContextTypes,
+    filters,
+)
+
+# ============ عدّلي هالمعلومات بس ============
+BOT_TOKEN = "8849001117:AAFEqPD0g_o9UYhXkm-TK_CSMQn1pRFQ52k"
+PAYMENT_NUMBER = "07XXXXXXXXX"   # <-- حطي رقم زين كاش/آسياسيل هنا
+DELIVERY_DAYS = "2-3 أيام"        # <-- عدّلي مدة التسليم إذا تريدين
+FIXED_PRICE = 10000               # السعر الثابت بالدينار
+# ==============================================
+
+# مراحل المحادثة
+CHOOSING_TYPE, ASKING_DETAILS = range(2)
+
+REPORT_TYPES = ["📚 بحث علمي", "🧪 تقرير مختبر", "📄 واجب دراسي", "🖥️ عرض تقديمي", "✏️ غيره"]
+
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    keyboard = [[t] for t in REPORT_TYPES]
+    await update.message.reply_text(
+        "مرحباً بيك 👋 بوت تقرير بلس بخدمتك\n\n"
+        "نساعدك تسوي تقاريرك الجامعية بسرعة واحترافية 🎓\n\n"
+        "شنو نوع التقرير المطلوب؟",
+        reply_markup=ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True),
+    )
+    return CHOOSING_TYPE
+
+
+async def choose_type(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["report_type"] = update.message.text
+    await update.message.reply_text(
+        "زين ✅\n\n"
+        "هسه اكتبلي بنفس الرسالة:\n"
+        "📚 اسم المادة/التخصص\n"
+        "📄 عدد الصفحات المطلوبة\n"
+        "📅 تاريخ التسليم (شنو آخر موعد؟)",
+        reply_markup=ReplyKeyboardRemove(),
+    )
+    return ASKING_DETAILS
+
+
+async def receive_details(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    details = update.message.text
+    report_type = context.user_data.get("report_type", "غير محدد")
+
+    summary = (
+        f"استلمت طلبك 👌\n\n"
+        f"📌 نوع التقرير: {report_type}\n"
+        f"📌 التفاصيل: {details}\n\n"
+        f"💰 السعر: {FIXED_PRICE:,} دينار عراقي\n"
+        f"⏳ مدة التسليم: {DELIVERY_DAYS}\n\n"
+        f"طريقة الدفع:\n"
+        f"🔹 زين كاش / آسياسيل: {PAYMENT_NUMBER}\n\n"
+        f"بعد إرسال إشعار الدفع (سكرين شوت) نبدأ فوراً بشغلك ✅\n\n"
+        f"لطلب جديد اكتب /start"
+    )
+    await update.message.reply_text(summary)
+    return ConversationHandler.END
+
+
+async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("تم إلغاء الطلب. لو حاب تبدأ من جديد اكتب /start", reply_markup=ReplyKeyboardRemove())
+    return ConversationHandler.END
+
+
+async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "📝 تقرير بلس\n\n"
+        "نسوي تقارير جامعية لكل التخصصات بجودة عالية وتنسيق احترافي.\n\n"
+        f"✅ سعر ثابت: {FIXED_PRICE:,} دينار عراقي\n"
+        f"✅ مدة التسليم: {DELIVERY_DAYS}\n"
+        "✅ مراجعة وتعديل حسب الحاجة\n\n"
+        "للطلب اكتب /start"
+    )
+
+
+def main():
+    app = Application.builder().token(BOT_TOKEN).build()
+
+    conv_handler = ConversationHandler(
+        entry_points=[CommandHandler("start", start)],
+        states={
+            CHOOSING_TYPE: [MessageHandler(filters.TEXT & ~filters.COMMAND, choose_type)],
+            ASKING_DETAILS: [MessageHandler(filters.TEXT & ~filters.COMMAND, receive_details)],
+        },
+        fallbacks=[CommandHandler("cancel", cancel)],
+    )
+
+    app.add_handler(conv_handler)
+    app.add_handler(CommandHandler("about", about))
+
+    print("البوت شغال... اتركي هالنافذة مفتوحة")
+    app.run_polling()
+
+
+if __name__ == "__main__":
+    main()
