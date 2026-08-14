@@ -130,8 +130,7 @@ def main():
 
     app.add_handler(conv_handler)
     app.add_handler(CommandHandler("about", about))
-   app.add_handler(MessageHandler((filters.Document.ALL | filters.PHOTO) & filters.User(ADMIN_CHAT_ID), deliver_file)) 
-
+    app.add_handler(MessageHandler((filters.Document.ALL | filters.PHOTO) & filters.User(ADMIN_CHAT_ID), deliver_file))
     print("البوت شغال... اتركي هالنافذة مفتوحة")
     app.run_polling()
 
