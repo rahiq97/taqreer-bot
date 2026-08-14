@@ -76,13 +76,30 @@ async def receive_details(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"🔔 طلب جديد!\n\n"
         f"👤 الاسم: {update.effective_user.first_name}\n"
         f"🆔 يوزر: @{update.effective_user.username}\n"
+        f"🔢 آيدي: {update.effective_user.id}\n"
         f"📌 نوع التقرير: {report_type}\n"
         f"📌 التفاصيل: {details}"
     )
     await context.bot.send_message(chat_id=ADMIN_CHAT_ID, text=admin_msg)
     return ConversationHandler.END
 
+async def deliver_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != ADMIN_CHAT_ID:
+        return
+    if not update.message.caption:
+        await update.message.reply_text("لازم تكتبين آيدي الزبون بالوصف (caption) وياه الملف")
+        return
+    try:
+        target_id = int(update.message.caption.strip())
+    except ValueError:
+        await update.message.reply_text("آيدي غير صحيح، أكتبي رقم بس")
+        return
 
+    if update.message.document:
+        await context.bot.send_document(chat_id=target_id, document=update.message.document.file_id, caption="📎 تقريرج جاهز، نتمنالك التوفيق ✅")
+    elif update.message.photo:
+        await context.bot.send_photo(chat_id=target_id, photo=update.message.photo[-1].file_id, caption="📎 تقريرج جاهز، نتمنالك التوفيق ✅")
+    await update.message.reply_text("✅ تم إرسال الملف للزبون")
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("تم إلغاء الطلب. لو حاب تبدأ من جديد اكتب /start", reply_markup=ReplyKeyboardRemove())
     return ConversationHandler.END
@@ -113,6 +130,7 @@ def main():
 
     app.add_handler(conv_handler)
     app.add_handler(CommandHandler("about", about))
+   app.add_handler(MessageHandler((filters.Document.ALL | filters.PHOTO) & filters.User(ADMIN_CHAT_ID), deliver_file)) 
 
     print("البوت شغال... اتركي هالنافذة مفتوحة")
     app.run_polling()
