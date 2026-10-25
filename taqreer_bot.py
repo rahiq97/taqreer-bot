@@ -3,20 +3,21 @@
 بوت تقرير بلس - يستقبل طلبات التقارير ويرد تلقائي بالسعر
 """
 
-from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove , InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
     CommandHandler,
     MessageHandler,
     ConversationHandler,
     ContextTypes,
+    CallbackQueryHandler,
     filters,
 )
 
 # ============ عدّلي هالمعلومات بس ============
 BOT_TOKEN = "8849001117:AAFEqPD0g_o9UYhXkm-TK_CSMQn1pRFQ52k"
 PAYMENT_NUMBER = "3250745712"   # <-- حطي رقم بطاقة كي كارد
-ADMIN_CHAT_ID = 5228198744   # آيدي حسابچ - يوصلچ إشعار بكل طلب
+ADMIN_CHAT_ID = 5228198744   #  آيدي حسابچ - يوصلچ إشعار بكل طلب  "@TaqreerPlus_Channel" 
 DELIVERY_DAYS = "2-3 أيام"        # <-- عدّلي مدة التسليم إذا تريدين
 FIXED_PRICE = 10000               # السعر الثابت بالدينار
 # ==============================================
